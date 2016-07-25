@@ -75,7 +75,7 @@ def main():
     metric_path = args.metric_path
     uuid = args.uuid
 
-    logger = setup_logging('picard_' + metric_name, args, uuid)
+    logger = setup_logging('samtools_' + metric_name, args, uuid)
 
     sqlite_name = uuid + '.db'
     engine_path = 'sqlite:///' + sqlite_name
