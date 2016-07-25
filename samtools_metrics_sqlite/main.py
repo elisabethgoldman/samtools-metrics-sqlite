@@ -83,19 +83,14 @@ def main():
 
     if metric_name == 'flagstat':
         bam = get_param(args, 'bam')
-        fasta = get_param(args, 'fasta')
         samtools_flagstat.run(uuid, metric_path, bam, input_state, engine, logger)
     elif metric_name == 'idxstats':
         bam = get_param(args, 'bam')
-        fasta = get_param(args, 'fasta')
         input_state = get_param(args, 'input_state')
-        vcf = get_param(args, 'vcf')
         samtools_idxstats.run(uuid, metric_path, bam, input_state, engine, logger)
     elif metric_name == 'stats':
         bam = get_param(args, 'bam')
-        fasta = get_param(args, 'fasta')
         input_state = get_param(args, 'input_state')
-        vcf = get_param(args, 'vcf')
         samtools_stats.run(uuid, metric_path, bam, input_state, engine, logger)
     else:
         sys.exit('No recognized tool was selected')
