@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 setup(name = 'samtools_metrics_sqlite',
       author = 'Jeremiah H. Savage',
       author_email = 'jeremiahsavage@gmail.com',
-      version = 0.2,
+      version = 0.3,
       description = 'store samtools metrics in sqlite',
       url = 'https://github.com/jeremiahsavage/samtools_metrics_sqlite',
       license = 'Apache 2.0',
