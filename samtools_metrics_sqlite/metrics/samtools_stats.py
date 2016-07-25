@@ -32,9 +32,7 @@ def samtools_stats_to_dict(metric_path, uuid):
 
 def run(uuid, metric_path, bam, input_state, engine, logger):
     data_dict = samtools_stats_to_dict(metric_path, uuid)
-    print('data_dict=\n%s' % data_dict)
     df = pd.DataFrame(data_dict)
-    #df['uuid'] = [uuid]
     df['bam'] = bam
     df['input_state'] = input_state
     table_name = 'samtools_stats'
