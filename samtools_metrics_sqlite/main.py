@@ -18,9 +18,9 @@ def get_param(args, param_name):
         return vars(args)[param_name]
     return
 
-def setup_logging(tool_name, args, run_uuid):
+def setup_logging(tool_name, args, task_uuid):
     logging.basicConfig(
-        filename=os.path.join(run_uuid + '_' + tool_name + '.log'),
+        filename=os.path.join(task_uuid + '_' + tool_name + '.log'),
         level=args.level,
         filemode='w',
         format='%(asctime)s %(levelname)s %(message)s',
@@ -55,7 +55,7 @@ def main():
     parser.add_argument('--metric_path',
                         required = True
     )
-    parser.add_argument('--run_uuid',
+    parser.add_argument('--task_uuid',
                         required = True
     )
 
@@ -73,25 +73,25 @@ def main():
     input_state = args.input_state
     metric_name = args.metric_name
     metric_path = args.metric_path
-    run_uuid = args.run_uuid
+    task_uuid = args.task_uuid
 
-    logger = setup_logging('samtools_' + metric_name, args, run_uuid)
+    logger = setup_logging('samtools_' + metric_name, args, task_uuid)
 
-    sqlite_name = run_uuid + '.db'
+    sqlite_name = task_uuid + '.db'
     engine_path = 'sqlite:///' + sqlite_name
     engine = sqlalchemy.create_engine(engine_path, isolation_level='SERIALIZABLE')
 
     if metric_name == 'flagstat':
         bam = get_param(args, 'bam')
-        samtools_flagstat.run(run_uuid, metric_path, bam, input_state, engine, logger)
+        samtools_flagstat.run(task_uuid, metric_path, bam, input_state, engine, logger)
     elif metric_name == 'idxstats':
         bam = get_param(args, 'bam')
         input_state = get_param(args, 'input_state')
-        samtools_idxstats.run(run_uuid, metric_path, bam, input_state, engine, logger)
+        samtools_idxstats.run(task_uuid, metric_path, bam, input_state, engine, logger)
     elif metric_name == 'stats':
         bam = get_param(args, 'bam')
         input_state = get_param(args, 'input_state')
-        samtools_stats.run(run_uuid, metric_path, bam, input_state, engine, logger)
+        samtools_stats.run(task_uuid, metric_path, bam, input_state, engine, logger)
     else:
         sys.exit('No recognized tool was selected')
     return

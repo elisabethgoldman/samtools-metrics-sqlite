@@ -1,8 +1,8 @@
 import pandas as pd
 
-def samtools_stats_to_dict(metric_path, run_uuid):
+def samtools_stats_to_dict(metric_path, task_uuid):
     data_dict = dict()
-    data_dict['run_uuid'] = [run_uuid]
+    data_dict['task_uuid'] = [task_uuid]
     values_to_store = ['raw total sequences:', 'filtered sequences:', 'sequences:',
                        'is sorted:', '1st fragments:', 'last fragments:', 'reads mapped:',
                        'reads mapped and paired:', 'reads unmapped:',
@@ -30,8 +30,8 @@ def samtools_stats_to_dict(metric_path, run_uuid):
     return data_dict
 
 
-def run(run_uuid, metric_path, bam, input_state, engine, logger):
-    data_dict = samtools_stats_to_dict(metric_path, run_uuid)
+def run(task_uuid, metric_path, bam, input_state, engine, logger):
+    data_dict = samtools_stats_to_dict(metric_path, task_uuid)
     df = pd.DataFrame(data_dict)
     df['bam'] = bam
     df['input_state'] = input_state

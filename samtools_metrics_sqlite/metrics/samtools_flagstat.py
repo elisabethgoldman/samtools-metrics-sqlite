@@ -3,7 +3,7 @@ import re
 
 import pandas as pd
 
-def samtools_flagstat_to_df(run_uuid, metric_path, logger):
+def samtools_flagstat_to_df(task_uuid, metric_path, logger):
     columns = ['value_1', 'value_2', 'stat']
     df = pd.DataFrame(columns=columns)
     flagstat_re = re.compile("(^[\d]+) [\+] ([\d]+) (.*)$")
@@ -21,9 +21,9 @@ def samtools_flagstat_to_df(run_uuid, metric_path, logger):
                 df.loc[len(df)] = [value_1, value_2, stat]
     return df
 
-def run(run_uuid, metric_path, bam, input_state, engine, logger):
-    df = samtools_flagstat_to_df(run_uuid, metric_path, logger)
-    df['run_uuid'] = run_uuid
+def run(task_uuid, metric_path, bam, input_state, engine, logger):
+    df = samtools_flagstat_to_df(task_uuid, metric_path, logger)
+    df['task_uuid'] = task_uuid
     df['bam'] = bam
     df['input_state'] = input_state
     table_name = 'samtools_flagstat'
