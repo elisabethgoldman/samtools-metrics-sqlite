@@ -13,10 +13,10 @@ def tsv_to_df(tsv_path, logger):
     return df
 
 
-def run(task_uuid, metric_path, bam, input_state, engine, logger):
+def run(job_uuid, metric_path, bam, input_state, engine, logger):
     df = tsv_to_df(metric_path, logger)
     df.columns = ['NAME', 'LENGTH', 'ALIGNED_READS', 'UNALIGNED_READS']
-    df['task_uuid'] = task_uuid
+    df['job_uuid'] = job_uuid
     df['bam'] = bam
     df['input_state'] = input_state
     table_name = 'samtools_idxstats'
