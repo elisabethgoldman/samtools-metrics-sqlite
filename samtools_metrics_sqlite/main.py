@@ -1,100 +1,57 @@
 #!/usr/bin/env python
 
 import argparse
-import logging
-import os
 import sys
 
 import sqlalchemy
 
-from .metrics import samtools_flagstat
-from .metrics import samtools_idxstats
-from .metrics import samtools_stats
+from samtools_metrics_sqlite import __version__
+from samtools_metrics_sqlite.metrics import (
+    samtools_flagstat,
+    samtools_idxstats,
+    samtools_stats,
+)
 
-def get_param(args, param_name):
-    if vars(args)[param_name] == None:
-        sys.exit('--'+ param_name + ' is required')
-    else:
-        return vars(args)[param_name]
-    return
 
-def setup_logging(tool_name, args, job_uuid):
-    logging.basicConfig(
-        filename=os.path.join(job_uuid + '_' + tool_name + '.log'),
-        level=args.level,
-        filemode='w',
-        format='%(asctime)s %(levelname)s %(message)s',
-        datefmt='%Y-%m-%d_%H:%M:%S_%Z',
-    )
-    logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
-    logger = logging.getLogger(__name__)
-    return logger
-
-def main():
+def main() -> int:
     parser = argparse.ArgumentParser('samtools metrics to sqlite tool')
 
-    # Logging flags.
-    parser.add_argument('-d', '--debug',
-        action = 'store_const',
-        const = logging.DEBUG,
-        dest = 'level',
-        help = 'Enable debug logging.',
-    )
-    parser.set_defaults(level = logging.INFO)
-
     # Required flags.
-    parser.add_argument('--bam',
-                        required = True
+    parser.add_argument('--bam', required=True)
+    parser.add_argument('--input_state', required=True)
+    parser.add_argument(
+        '--metric_name', required=True, choices=('flagstat', 'idxstats', 'stats')
     )
-    parser.add_argument('--input_state',
-                        required = True
-    )
-    parser.add_argument('--metric_name',
-                        required = True
-    )
-    parser.add_argument('--metric_path',
-                        required = True
-    )
-    parser.add_argument('--job_uuid',
-                        required = True
-    )
+    parser.add_argument('--metric_path', required=True)
+    parser.add_argument('--job_uuid', required=True)
 
     # Tool flags
-    parser.add_argument('--vcf',
-                        required = False
-    )
-    parser.add_argument('--fasta',
-                        required = False
-    )
+    parser.add_argument('--vcf', required=False)
+    parser.add_argument('--fasta', required=False)
+    parser.add_argument('--version', action="version", version=__version__)
 
     # setup required parameters
     args = parser.parse_args()
-    bam = args.input_state
+    bam = args.bam
     input_state = args.input_state
     metric_name = args.metric_name
     metric_path = args.metric_path
     job_uuid = args.job_uuid
 
-    logger = setup_logging('samtools_' + metric_name, args, job_uuid)
-
-    sqlite_name = job_uuid + '.db'
-    engine_path = 'sqlite:///' + sqlite_name
+    sqlite_name = f"{job_uuid}.db"
+    engine_path = f"sqlite:///{sqlite_name}"
     engine = sqlalchemy.create_engine(engine_path, isolation_level='SERIALIZABLE')
 
     if metric_name == 'flagstat':
-        bam = get_param(args, 'bam')
-        samtools_flagstat.run(job_uuid, metric_path, bam, input_state, engine, logger)
+        samtools_flagstat.run(job_uuid, metric_path, bam, input_state, engine)
     elif metric_name == 'idxstats':
-        bam = get_param(args, 'bam')
-        input_state = get_param(args, 'input_state')
-        samtools_idxstats.run(job_uuid, metric_path, bam, input_state, engine, logger)
+        samtools_idxstats.run(job_uuid, metric_path, bam, input_state, engine)
     elif metric_name == 'stats':
-        bam = get_param(args, 'bam')
-        input_state = get_param(args, 'input_state')
-        samtools_stats.run(job_uuid, metric_path, bam, input_state, engine, logger)
+        samtools_stats.run(job_uuid, metric_path, bam, input_state, engine)
     else:
         sys.exit('No recognized tool was selected')
-    return
+    return 0
+
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

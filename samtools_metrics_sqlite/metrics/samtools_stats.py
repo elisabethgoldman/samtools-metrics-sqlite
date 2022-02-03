@@ -1,19 +1,47 @@
+from typing import TYPE_CHECKING
+
 import pandas as pd
 
-def samtools_stats_to_dict(metric_path, job_uuid):
-    data_dict = dict()
+if TYPE_CHECKING:
+    from sqlalchemy import engine
+
+
+def samtools_stats_to_dict(metric_path: str, job_uuid: str) -> dict:
+    data_dict: dict = dict()
     data_dict['job_uuid'] = [job_uuid]
-    values_to_store = ['raw total sequences:', 'filtered sequences:', 'sequences:',
-                       'is sorted:', '1st fragments:', 'last fragments:', 'reads mapped:',
-                       'reads mapped and paired:', 'reads unmapped:',
-                       'reads properly paired:', 'reads paired:', 'reads duplicated:',
-                       'reads MQ0:', 'reads QC failed:', 'non-primary alignments:',
-                       'total length:', 'bases mapped:', 'bases mapped (cigar):',
-                       'bases trimmed:', 'bases duplicated:', 'mismatches:', 'error rate:',
-                       'average length:', 'maximum length:', 'average quality:',
-                       'insert size average:', 'insert size standard deviation:',
-                       'inward oriented pairs:', 'outward oriented pairs:',
-                       'pairs with other orientation:', 'pairs on different chromosomes:']
+    values_to_store = [
+        'raw total sequences:',
+        'filtered sequences:',
+        'sequences:',
+        'is sorted:',
+        '1st fragments:',
+        'last fragments:',
+        'reads mapped:',
+        'reads mapped and paired:',
+        'reads unmapped:',
+        'reads properly paired:',
+        'reads paired:',
+        'reads duplicated:',
+        'reads MQ0:',
+        'reads QC failed:',
+        'non-primary alignments:',
+        'total length:',
+        'bases mapped:',
+        'bases mapped (cigar):',
+        'bases trimmed:',
+        'bases duplicated:',
+        'mismatches:',
+        'error rate:',
+        'average length:',
+        'maximum length:',
+        'average quality:',
+        'insert size average:',
+        'insert size standard deviation:',
+        'inward oriented pairs:',
+        'outward oriented pairs:',
+        'pairs with other orientation:',
+        'pairs on different chromosomes:',
+    ]
     with open(metric_path, 'r') as f_open:
         for line in f_open:
             line = line.strip('\n')
@@ -30,7 +58,9 @@ def samtools_stats_to_dict(metric_path, job_uuid):
     return data_dict
 
 
-def run(job_uuid, metric_path, bam, input_state, engine, logger):
+def run(
+    job_uuid: str, metric_path: str, bam: str, input_state: str, engine: "engine"
+) -> None:
     data_dict = samtools_stats_to_dict(metric_path, job_uuid)
     df = pd.DataFrame(data_dict)
     df['bam'] = bam
