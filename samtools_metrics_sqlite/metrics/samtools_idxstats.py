@@ -1,20 +1,26 @@
+from typing import TYPE_CHECKING
+
 import pandas as pd
 
-def tsv_to_df(tsv_path, logger):
+if TYPE_CHECKING:
+    from sqlalchemy import engine
+
+
+def tsv_to_df(tsv_path: str) -> pd.DataFrame:
     data_dict = dict()
     with open(tsv_path, 'r') as f_open:
-        i = 0
-        for line in f_open:
+        for idx, line in enumerate(f_open):
             line = line.strip('\n')
             line_split = line.split('\t')
-            data_dict[i] = line_split
-            i += 1
+            data_dict[idx] = line_split
     df = pd.DataFrame.from_dict(data_dict, orient='index')
     return df
 
 
-def run(job_uuid, metric_path, bam, input_state, engine, logger):
-    df = tsv_to_df(metric_path, logger)
+def run(
+    job_uuid: str, metric_path: str, bam: str, input_state: str, engine: "engine"
+) -> None:
+    df = tsv_to_df(metric_path)
     df.columns = ['NAME', 'LENGTH', 'ALIGNED_READS', 'UNALIGNED_READS']
     df['job_uuid'] = job_uuid
     df['bam'] = bam
