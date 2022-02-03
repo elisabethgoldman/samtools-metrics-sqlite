@@ -1,4 +1,4 @@
-REPO = samtools-metrics-sqlite
+REPO = samtools_metrics_sqlite
 
 MODULE = samtools_metrics_sqlite
 
