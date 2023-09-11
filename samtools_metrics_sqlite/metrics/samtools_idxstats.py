@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 import pandas as pd
 
 if TYPE_CHECKING:
-    from sqlalchemy import engine
+    from sqlalchemy import Engine
 
 
 def tsv_to_df(tsv_path: str) -> pd.DataFrame:
@@ -18,7 +18,7 @@ def tsv_to_df(tsv_path: str) -> pd.DataFrame:
 
 
 def run(
-    job_uuid: str, metric_path: str, bam: str, input_state: str, engine: "engine"
+    job_uuid: str, metric_path: str, bam: str, input_state: str, engine: "Engine"
 ) -> None:
     df = tsv_to_df(metric_path)
     df.columns = ['NAME', 'LENGTH', 'ALIGNED_READS', 'UNALIGNED_READS']
